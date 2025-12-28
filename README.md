@@ -18,9 +18,15 @@ A Windows application that allows you to easily toggle SteamVR's simulated (null
 
 ## Screenshots
 
+### Disabled State
+![Disabled State](ui-photos/Disabled.png)
+
+### Enabled State
+![Enabled State](ui-photos/Enabled.png)
+
 The application features:
-- Green status indicator when ready to use
-- Toggle button that shows current state (ENABLE/DISABLE VR MODE)
+- Colored status indicator showing current state (green when enabled, red when disabled)
+- Toggle button that changes text based on state (ENABLE/DISABLE HEADLESS MODE)
 - Settings dialog for manual file path configuration
 - Auto-detect functionality for finding Steam files
 
