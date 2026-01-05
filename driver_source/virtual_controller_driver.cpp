@@ -108,7 +108,12 @@ public:
         VR_INIT_SERVER_DRIVER_CONTEXT(pDriverContext);
 
         // Read config to determine how many controllers to create
-        int controllerCount = VRSettings()->GetInt32("driver_virtualcontroller", "controller_count", 2);
+        EVRSettingsError error = VRSettingsError_None;
+        int controllerCount = VRSettings()->GetInt32("driver_virtualcontroller", "controller_count", &error);
+        if (error != VRSettingsError_None)
+        {
+            controllerCount = 2; // Default to 2 controllers if setting not found
+        }
 
         // Create controllers
         for (int i = 0; i < controllerCount && i < 4; i++)
