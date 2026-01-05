@@ -1,0 +1,55 @@
+name: Build Virtual Controller Driver
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    paths:
+      - 'driver_source/**'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Download OpenVR SDK
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/ValveSoftware/openvr/archive/refs/tags/v1.23.7.zip" -OutFile "openvr.zip"
+          Expand-Archive -Path "openvr.zip" -DestinationPath "driver_source\"
+          Rename-Item -Path "driver_source\openvr-1.23.7" -NewName "openvr"
+        shell: pwsh
+
+      - name: Configure CMake
+        run: |
+          cd driver_source
+          mkdir build
+          cd build
+          cmake .. -G "Visual Studio 17 2022" -A x64
+        shell: cmd
+
+      - name: Build Driver
+        run: |
+          cd driver_source\build
+          cmake --build . --config Release
+        shell: cmd
+
+      - name: Prepare Artifacts
+        run: |
+          mkdir drivers\virtual_controller\bin\win64
+          copy driver_source\build\bin\Release\driver_virtualcontroller.dll drivers\virtual_controller\bin\win64\driver_virtual_controller.dll
+        shell: cmd
+
+      - name: Upload Driver DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: virtual-controller-driver
+          path: drivers/virtual_controller/bin/win64/driver_virtual_controller.dll
+          if-no-files-found: error

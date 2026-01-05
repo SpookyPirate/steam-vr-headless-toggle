@@ -43,6 +43,10 @@ config/app_config.json
 backups/
 *.log
 
+# Virtual controller drivers (users must provide their own)
+drivers/virtual_controller/bin/**/*.dll
+!drivers/virtual_controller/bin/**/.gitkeep
+
 # OS
 .DS_Store
 Thumbs.db

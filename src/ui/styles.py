@@ -41,8 +41,8 @@ class Dimensions:
     """Dimension constants."""
 
     # Main window
-    MAIN_WINDOW_WIDTH = 320
-    MAIN_WINDOW_HEIGHT = 280
+    MAIN_WINDOW_WIDTH = 360
+    MAIN_WINDOW_HEIGHT = 480
 
     # Settings dialog
     SETTINGS_WIDTH = 550

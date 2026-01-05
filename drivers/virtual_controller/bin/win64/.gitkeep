@@ -1,0 +1,3 @@
+# This directory is for the virtual controller driver DLL
+# Place driver_virtual_controller.dll here
+# See drivers/virtual_controller/README.md for setup instructions

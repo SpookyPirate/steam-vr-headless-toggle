@@ -1,0 +1,10 @@
+{
+	"alwaysActivate": false,
+	"name": "virtual_controller",
+	"directory": "",
+	"resourceOnly": false,
+	"hmd_presence": [],
+	"tracked_presence": [
+		"*"
+	]
+}

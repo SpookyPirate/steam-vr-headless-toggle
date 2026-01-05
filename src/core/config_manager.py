@@ -12,11 +12,17 @@ class ConfigManager:
         "version": "1.0.0",
         "file_paths": {
             "null_driver": "",
-            "steamvr_config": ""
+            "steamvr_config": "",
+            "steamvr_root": ""
         },
         "state": {
             "last_toggle_state": "disabled",
             "last_successful_toggle": ""
+        },
+        "virtual_controllers": {
+            "enabled": True,
+            "controller_count": 2,
+            "auto_enable_with_headless": True
         },
         "ui": {
             "window_position": {
@@ -202,3 +208,59 @@ class ConfigManager:
             bool: True if backups are enabled
         """
         return self.get('backups.enabled', True)
+
+    def get_steamvr_root_path(self) -> str:
+        """Get the SteamVR root directory path.
+
+        Returns:
+            str: Path to SteamVR root directory
+        """
+        return self.get('file_paths.steamvr_root', '')
+
+    def set_steamvr_root_path(self, path: str) -> None:
+        """Set the SteamVR root directory path.
+
+        Args:
+            path: Path to SteamVR root directory
+        """
+        self.set('file_paths.steamvr_root', path)
+
+    def are_virtual_controllers_enabled(self) -> bool:
+        """Check if virtual controllers are enabled.
+
+        Returns:
+            bool: True if virtual controllers are enabled
+        """
+        return self.get('virtual_controllers.enabled', True)
+
+    def set_virtual_controllers_enabled(self, enabled: bool) -> None:
+        """Set whether virtual controllers are enabled.
+
+        Args:
+            enabled: Whether to enable virtual controllers
+        """
+        self.set('virtual_controllers.enabled', enabled)
+
+    def get_controller_count(self) -> int:
+        """Get the number of virtual controllers.
+
+        Returns:
+            int: Number of controllers
+        """
+        return self.get('virtual_controllers.controller_count', 2)
+
+    def set_controller_count(self, count: int) -> None:
+        """Set the number of virtual controllers.
+
+        Args:
+            count: Number of controllers (0-4)
+        """
+        self.set('virtual_controllers.controller_count', count)
+
+    def should_auto_enable_controllers(self) -> bool:
+        """Check if controllers should auto-enable with headless mode.
+
+        Returns:
+            bool: True if controllers should auto-enable
+        """
+        return self.get('virtual_controllers.auto_enable_with_headless', True)

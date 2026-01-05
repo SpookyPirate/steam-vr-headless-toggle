@@ -1,0 +1,13 @@
+{
+   "driver_virtual_controller": {
+      "enable": false,
+      "controller_count": 0,
+      "controller_0_role": "left",
+      "controller_1_role": "right",
+      "controller_2_role": "tracker",
+      "controller_3_role": "tracker",
+      "position_x": 0.0,
+      "position_y": 1.0,
+      "position_z": -0.5
+   }
+}

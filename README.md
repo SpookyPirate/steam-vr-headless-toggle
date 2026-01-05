@@ -5,6 +5,10 @@ A Windows application that allows you to easily toggle SteamVR's simulated (null
 ## Features
 
 - **One-Click Toggle**: Enable or disable VR headless mode with a single button
+- **Virtual Controllers**: Automatically spawn virtual VR controllers when headless mode is enabled
+  - Configure number of controllers (0-4)
+  - Controllers appear in SteamVR and are recognized by VR applications
+  - User-configurable with slider and checkbox
 - **Auto-Detection**: Automatically finds your Steam installation and SteamVR configuration files
 - **Dark Mode UI**: Modern, clean dark-themed interface
 - **Smart Admin Elevation**: Only requests administrator privileges when needed
@@ -102,6 +106,8 @@ The app modifies two files in your Steam directory:
 
 ## What It Does
 
+### Headless Mode
+
 When you enable VR headless mode, the app modifies the following settings:
 
 ### Null Driver File
@@ -126,6 +132,15 @@ When you enable VR headless mode, the app modifies the following settings:
 
 When you disable VR headless mode, these settings are reverted to their original values.
 
+### Virtual Controllers
+
+When virtual controllers are enabled, the app:
+1. Installs a virtual controller driver to SteamVR's drivers directory
+2. Configures the number of controllers based on your settings
+3. The controllers appear in SteamVR and can be used by VR applications
+
+**Important**: You need to provide a virtual controller driver DLL. See the [Virtual Controller Setup](#virtual-controller-setup) section below.
+
 ## Safety Features
 
 - **Automatic Backups**: Creates timestamped backups before every modification
@@ -133,6 +148,45 @@ When you disable VR headless mode, these settings are reverted to their original
 - **Rollback on Failure**: Automatically restores from backup if any error occurs
 - **Validation**: Verifies file structure before and after modifications
 - **Precise Editing**: Only modifies target settings, preserves all other values
+
+## Virtual Controller Setup
+
+### Automatic Setup (Recommended)
+
+The application will automatically download and install the virtual controller driver for you!
+
+1. Launch the application
+2. Check the box: **"Enable virtual controllers with headless mode"**
+3. Click **"Yes"** when prompted to auto-install
+4. The app will:
+   - Download OpenVR InputEmulator (25 MB)
+   - Run the installer (you'll complete the installation wizard)
+   - Automatically extract and configure the driver
+   - Set everything up for you
+
+**That's it!** The driver installation is fully automated and only happens once.
+
+### Manual Setup (If Needed)
+
+If automatic installation doesn't work:
+
+1. Download a pre-built driver:
+   - **OpenVR-InputEmulator**: Already downloaded in the project folder as `OpenVR-InputEmulator-v1.3.exe`
+   - Or get it from: https://github.com/matzman666/OpenVR-InputEmulator/releases
+
+2. Run the provided helper:
+   ```bash
+   python extract_driver.py
+   ```
+
+3. Or follow manual instructions in `EASY_DRIVER_SETUP.md`
+
+### Detailed Instructions
+
+See the setup guides for more details:
+- `EASY_DRIVER_SETUP.md` - Simple step-by-step guide
+- `VIRTUAL_CONTROLLERS_SETUP.md` - Comprehensive guide with troubleshooting
+- `drivers/virtual_controller/README.md` - Technical details and alternatives
 
 ## Configuration
 
@@ -144,6 +198,7 @@ config/app_config.json
 This file contains:
 - File paths to SteamVR configuration files
 - Last known toggle state
+- Virtual controller settings (enabled, count)
 - Backup settings
 
 ## Building from Source
@@ -163,24 +218,31 @@ The executable will be created in the `dist/` folder.
 ```
 steam-simulated-vr-headset-toggle/
 ├── src/
-│   ├── main.py                  # Entry point
+│   ├── main.py                     # Entry point
 │   ├── ui/
-│   │   ├── main_window.py       # Main GUI window
-│   │   ├── settings_dialog.py   # Settings dialog
-│   │   └── styles.py            # UI styling constants
+│   │   ├── main_window.py          # Main GUI window
+│   │   ├── settings_dialog.py      # Settings dialog
+│   │   └── styles.py               # UI styling constants
 │   ├── core/
-│   │   ├── file_manager.py      # Safe JSON operations
-│   │   ├── state_manager.py     # Toggle logic
-│   │   ├── config_manager.py    # App configuration
-│   │   └── path_detector.py     # Steam directory detection
+│   │   ├── file_manager.py         # Safe JSON operations
+│   │   ├── state_manager.py        # Toggle logic
+│   │   ├── config_manager.py       # App configuration
+│   │   ├── controller_manager.py   # Virtual controller management
+│   │   └── path_detector.py        # Steam directory detection
 │   └── utils/
-│       ├── admin_utils.py       # UAC elevation
-│       └── validators.py        # File validation
-├── config/                      # Configuration storage
-├── backups/                     # Automatic backups
-├── requirements.txt             # Python dependencies
-├── build_exe.py                 # Build script
-└── README.md                    # This file
+│       ├── admin_utils.py          # UAC elevation
+│       └── validators.py           # File validation
+├── drivers/
+│   └── virtual_controller/         # Virtual controller driver
+│       ├── driver.vrdrivermanifest # Driver manifest
+│       ├── bin/win64/              # Place driver DLL here
+│       ├── resources/settings/     # Driver configuration
+│       └── README.md               # Driver setup instructions
+├── config/                         # Configuration storage
+├── backups/                        # Automatic backups
+├── requirements.txt                # Python dependencies
+├── build_exe.py                    # Build script
+└── README.md                       # This file
 ```
 
 ### Dependencies
@@ -212,6 +274,15 @@ steam-simulated-vr-headset-toggle/
 1. Close SteamVR before toggling
 2. Verify both files are detected (check settings)
 3. Check the backups folder for recent backups if you need to restore manually
+4. If using virtual controllers, restart SteamVR after enabling them
+
+### Virtual Controllers Not Appearing
+
+1. Make sure you've placed a valid driver DLL in `drivers/virtual_controller/bin/win64/`
+2. Check that the checkbox "Enable virtual controllers with headless mode" is checked
+3. Restart SteamVR completely after enabling headless mode
+4. Check SteamVR logs at `%LOCALAPPDATA%\openvr\vrserver.txt` for errors
+5. Ensure the driver DLL is compatible with your SteamVR version
 
 ### Config Reset
 

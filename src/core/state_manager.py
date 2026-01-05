@@ -1,7 +1,9 @@
 from enum import Enum
-from typing import Tuple
+from typing import Tuple, Optional
 from src.core.file_manager import FileManager
+from src.core.controller_manager import ControllerManager
 from src.utils.validators import FileValidator
+from pathlib import Path
 
 
 class ToggleState(Enum):
@@ -15,18 +17,27 @@ class ToggleState(Enum):
 class StateManager:
     """Manages VR toggle state and coordinates file modifications."""
 
-    def __init__(self, null_driver_path: str, steamvr_config_path: str, backup_dir: str = "backups"):
+    def __init__(self, null_driver_path: str, steamvr_config_path: str, backup_dir: str = "backups",
+                 controller_manager: Optional[ControllerManager] = None,
+                 enable_controllers: bool = True,
+                 controller_count: int = 2):
         """Initialize StateManager.
 
         Args:
             null_driver_path: Path to null driver file
             steamvr_config_path: Path to SteamVR config file
             backup_dir: Directory for backups
+            controller_manager: Optional ControllerManager instance
+            enable_controllers: Whether to enable virtual controllers with headless mode
+            controller_count: Number of virtual controllers to spawn
         """
         self.null_driver_path = null_driver_path
         self.steamvr_config_path = steamvr_config_path
         self.backup_dir = backup_dir
         self.file_manager = FileManager()
+        self.controller_manager = controller_manager
+        self.enable_controllers = enable_controllers
+        self.controller_count = controller_count
 
     def get_current_state(self) -> ToggleState:
         """Determine the current VR mode state by reading the files.
@@ -109,6 +120,13 @@ class StateManager:
                 self._modify_null_driver(False)
                 return False, f"Failed to modify SteamVR config: {error}", ToggleState.ERROR
 
+            # Enable virtual controllers if configured
+            if self.enable_controllers and self.controller_manager:
+                success, error = self.controller_manager.enable_controllers(self.controller_count)
+                if not success:
+                    # Don't rollback VR settings, just log the error
+                    print(f"Warning: Failed to enable virtual controllers: {error}")
+
             # Verify the changes
             new_state = self.get_current_state()
             if new_state != ToggleState.ENABLED:
@@ -130,6 +148,13 @@ class StateManager:
             valid, error = self.verify_files()
             if not valid:
                 return False, error, ToggleState.ERROR
+
+            # Disable virtual controllers first if configured
+            if self.controller_manager:
+                success, error = self.controller_manager.disable_controllers()
+                if not success:
+                    # Don't abort, just log the error
+                    print(f"Warning: Failed to disable virtual controllers: {error}")
 
             # Modify null driver file
             success, error = self._modify_null_driver(False)
