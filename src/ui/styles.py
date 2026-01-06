@@ -42,7 +42,7 @@ class Dimensions:
 
     # Main window
     MAIN_WINDOW_WIDTH = 360
-    MAIN_WINDOW_HEIGHT = 420
+    MAIN_WINDOW_HEIGHT = 360
 
     # Settings dialog
     SETTINGS_WIDTH = 550
