@@ -201,15 +201,6 @@ class MainWindow(ctk.CTk):
         )
         self.controller_slider.pack(side="right", fill="x", expand=True, padx=(0, 10))
 
-        # Driver status label
-        self.driver_status_label = ctk.CTkLabel(
-            controllers_frame,
-            text="Driver bundled with application ✓",
-            font=(Fonts.FAMILY, Fonts.SIZE_NORMAL - 2),
-            text_color=Colors.SUCCESS
-        )
-        self.driver_status_label.pack(pady=(0, 10))
-
         # Settings button (bottom right)
         settings_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         settings_frame.pack(fill="x", side="bottom")
