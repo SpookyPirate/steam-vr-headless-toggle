@@ -120,12 +120,17 @@ class StateManager:
                 self._modify_null_driver(False)
                 return False, f"Failed to modify SteamVR config: {error}", ToggleState.ERROR
 
-            # Enable virtual controllers if configured
+            # Install and enable virtual controllers if configured
             if self.enable_controllers and self.controller_manager:
-                success, error = self.controller_manager.enable_controllers(self.controller_count)
+                # Install driver to SteamVR
+                success, error = self.controller_manager.install_driver()
                 if not success:
-                    # Don't rollback VR settings, just log the error
-                    print(f"Warning: Failed to enable virtual controllers: {error}")
+                    print(f"Warning: Failed to install virtual controller driver: {error}")
+                else:
+                    # Configure controller count
+                    success, error = self.controller_manager.enable_controllers(self.controller_count)
+                    if not success:
+                        print(f"Warning: Failed to configure virtual controllers: {error}")
 
             # Verify the changes
             new_state = self.get_current_state()
@@ -149,12 +154,12 @@ class StateManager:
             if not valid:
                 return False, error, ToggleState.ERROR
 
-            # Disable virtual controllers first if configured
+            # Uninstall virtual controller driver from SteamVR
             if self.controller_manager:
-                success, error = self.controller_manager.disable_controllers()
+                success, error = self.controller_manager.uninstall_driver()
                 if not success:
                     # Don't abort, just log the error
-                    print(f"Warning: Failed to disable virtual controllers: {error}")
+                    print(f"Warning: Failed to uninstall virtual controller driver: {error}")
 
             # Modify null driver file
             success, error = self._modify_null_driver(False)

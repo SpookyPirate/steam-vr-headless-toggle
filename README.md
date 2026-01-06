@@ -134,12 +134,13 @@ When you disable VR headless mode, these settings are reverted to their original
 
 ### Virtual Controllers
 
-When virtual controllers are enabled, the app:
-1. Installs a virtual controller driver to SteamVR's drivers directory
-2. Configures the number of controllers based on your settings
+When virtual controllers are enabled, the app **automatically**:
+1. Installs a pre-built virtual controller driver to SteamVR when you enable headless mode
+2. Configures the number of controllers (0-4) based on your slider setting
 3. The controllers appear in SteamVR and can be used by VR applications
+4. Removes the driver from SteamVR when you disable headless mode
 
-**Important**: You need to provide a virtual controller driver DLL. See the [Virtual Controller Setup](#virtual-controller-setup) section below.
+**No manual setup required!** The driver is pre-built and bundled with the application.
 
 ## Safety Features
 
@@ -149,44 +150,29 @@ When virtual controllers are enabled, the app:
 - **Validation**: Verifies file structure before and after modifications
 - **Precise Editing**: Only modifies target settings, preserves all other values
 
-## Virtual Controller Setup
+## How It Works
 
-### Automatic Setup (Recommended)
+### Automatic Driver Management
 
-The application will automatically download and install the virtual controller driver for you!
+The virtual controller driver is **pre-built and bundled** with the application. No manual setup needed!
 
-1. Launch the application
-2. Check the box: **"Enable virtual controllers with headless mode"**
-3. Click **"Yes"** when prompted to auto-install
-4. The app will:
-   - Download OpenVR InputEmulator (25 MB)
-   - Run the installer (you'll complete the installation wizard)
-   - Automatically extract and configure the driver
-   - Set everything up for you
+**When you enable headless mode:**
+- The app automatically installs the driver to: `SteamVR/drivers/virtual_controller/`
+- Configures it with your chosen controller count
+- Controllers appear in SteamVR immediately
 
-**That's it!** The driver installation is fully automated and only happens once.
+**When you disable headless mode:**
+- The app automatically removes the driver from SteamVR
+- Clean uninstall, no files left behind
 
-### Manual Setup (If Needed)
+### Building the Driver (For Developers)
 
-If automatic installation doesn't work:
+The driver is automatically built using GitHub Actions. If you want to rebuild it:
 
-1. Download a pre-built driver:
-   - **OpenVR-InputEmulator**: Already downloaded in the project folder as `OpenVR-InputEmulator-v1.3.exe`
-   - Or get it from: https://github.com/matzman666/OpenVR-InputEmulator/releases
-
-2. Run the provided helper:
-   ```bash
-   python extract_driver.py
-   ```
-
-3. Or follow manual instructions in `EASY_DRIVER_SETUP.md`
-
-### Detailed Instructions
-
-See the setup guides for more details:
-- `EASY_DRIVER_SETUP.md` - Simple step-by-step guide
-- `VIRTUAL_CONTROLLERS_SETUP.md` - Comprehensive guide with troubleshooting
-- `drivers/virtual_controller/README.md` - Technical details and alternatives
+1. Push changes to the `driver_source/` folder
+2. GitHub Actions will automatically compile the driver
+3. Download the built DLL from the Actions artifacts
+4. Or use the workflow: `.github/workflows/build-driver.yml`
 
 ## Configuration
 
@@ -278,11 +264,11 @@ steam-simulated-vr-headset-toggle/
 
 ### Virtual Controllers Not Appearing
 
-1. Make sure you've placed a valid driver DLL in `drivers/virtual_controller/bin/win64/`
-2. Check that the checkbox "Enable virtual controllers with headless mode" is checked
-3. Restart SteamVR completely after enabling headless mode
-4. Check SteamVR logs at `%LOCALAPPDATA%\openvr\vrserver.txt` for errors
-5. Ensure the driver DLL is compatible with your SteamVR version
+1. Check that the checkbox "Enable virtual controllers with headless mode" is checked
+2. Make sure you disabled and then re-enabled headless mode (this installs the driver)
+3. Close SteamVR completely, then launch it again
+4. Check controller count is set to at least 1 (use the slider)
+5. Check SteamVR logs for errors: `C:\Program Files (x86)\Steam\logs\vrserver.txt`
 
 ### Config Reset
 
