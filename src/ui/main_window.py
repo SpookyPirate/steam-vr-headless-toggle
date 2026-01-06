@@ -1,7 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
 import sys
-from PIL import Image, ImageTk
 
 from src.core.state_manager import StateManager, ToggleState
 from src.core.config_manager import ConfigManager
@@ -46,13 +45,9 @@ class MainWindow(ctk.CTk):
 
         # Set window icon
         try:
-            icon_path = Path(__file__).parent.parent.parent / "ui-photos" / "steamvr-headless-toggle-icon.png"
+            icon_path = Path(__file__).parent.parent.parent / "ui-photos" / "steamvr-headless-toggle-icon.ico"
             if icon_path.exists():
-                icon_image = Image.open(icon_path)
-                icon_photo = ImageTk.PhotoImage(icon_image)
-                self.iconphoto(True, icon_photo)
-                # Keep reference to prevent garbage collection
-                self._icon_photo = icon_photo
+                self.iconbitmap(str(icon_path))
         except Exception as e:
             print(f"Warning: Could not load icon: {e}")
 
