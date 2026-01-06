@@ -4,6 +4,7 @@ Handles enabling/disabling virtual VR controllers for headless mode.
 """
 
 import os
+import sys
 import json
 import shutil
 from pathlib import Path
@@ -26,7 +27,13 @@ class ControllerManager:
         self.driver_install_path = self.drivers_path / self.driver_name
 
         # Path to bundled driver in our application
-        self.bundled_driver_path = Path(__file__).parent.parent.parent / "drivers" / self.driver_name
+        # Support both development and PyInstaller bundled paths
+        if getattr(sys, 'frozen', False):
+            # Running as compiled executable
+            self.bundled_driver_path = Path(sys._MEIPASS) / "drivers" / self.driver_name
+        else:
+            # Running as script
+            self.bundled_driver_path = Path(__file__).parent.parent.parent / "drivers" / self.driver_name
 
     def is_driver_installed(self) -> bool:
         """Check if virtual controller driver is installed in SteamVR.

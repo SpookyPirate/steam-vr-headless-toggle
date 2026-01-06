@@ -18,8 +18,11 @@ def build():
     src_dir = os.path.join(project_dir, 'src')
     main_script = os.path.join(src_dir, 'main.py')
 
-    # Icon path (optional - will use default if not found)
-    icon_path = os.path.join(project_dir, 'resources', 'icon.ico')
+    # Icon path
+    icon_path = os.path.join(project_dir, 'ui-photos', 'steamvr-headless-toggle-icon.ico')
+
+    # Driver folder path
+    drivers_dir = os.path.join(project_dir, 'drivers')
 
     print("Building SteamVR Headless Toggle executable...")
     print(f"Project directory: {project_dir}")
@@ -43,10 +46,19 @@ def build():
         args.append(f'--icon={icon_path}')
         print(f"Using icon: {icon_path}")
     else:
-        print("No icon found, using default")
+        print("Warning: Icon not found, using default")
 
-    # Add data files if needed
-    # args.append(f'--add-data={resources_dir};resources')
+    # Add data files - bundle the virtual controller driver
+    if os.path.exists(drivers_dir):
+        args.append(f'--add-data={drivers_dir};drivers')
+        print(f"Bundling drivers folder: {drivers_dir}")
+    else:
+        print("Warning: Drivers folder not found")
+
+    # Add icon for runtime loading
+    if os.path.exists(icon_path):
+        args.append(f'--add-data={icon_path};ui-photos')
+        print(f"Bundling icon: {icon_path}")
 
     # Run PyInstaller
     try:

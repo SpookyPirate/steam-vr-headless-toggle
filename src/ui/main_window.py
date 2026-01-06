@@ -45,7 +45,14 @@ class MainWindow(ctk.CTk):
 
         # Set window icon
         try:
-            icon_path = Path(__file__).parent.parent.parent / "ui-photos" / "steamvr-headless-toggle-icon.ico"
+            # Support both development and PyInstaller bundled paths
+            if getattr(sys, 'frozen', False):
+                # Running as compiled executable
+                icon_path = Path(sys._MEIPASS) / "ui-photos" / "steamvr-headless-toggle-icon.ico"
+            else:
+                # Running as script
+                icon_path = Path(__file__).parent.parent.parent / "ui-photos" / "steamvr-headless-toggle-icon.ico"
+
             if icon_path.exists():
                 self.iconbitmap(str(icon_path))
         except Exception as e:
