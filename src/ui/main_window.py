@@ -112,7 +112,7 @@ class MainWindow(ctk.CTk):
             font=(Fonts.FAMILY, Fonts.SIZE_TITLE, "bold"),
             text_color=Colors.TEXT
         )
-        status_title_label.pack(pady=(10, 5))
+        status_title_label.pack(pady=(0, 5))
 
         # Status indicator (colored text without dot)
         self.status_label = ctk.CTkLabel(
@@ -146,7 +146,7 @@ class MainWindow(ctk.CTk):
 
         # Virtual Controllers section
         controllers_frame = ctk.CTkFrame(main_frame, fg_color=Colors.WIDGET_BG, corner_radius=10)
-        controllers_frame.pack(fill="x", padx=15, pady=(0, 20))
+        controllers_frame.pack(fill="x", padx=15, pady=(0, 0))
 
         # Controllers header
         controllers_header = ctk.CTkLabel(
