@@ -29,13 +29,13 @@ class ControllerManager:
         self.bundled_driver_path = Path(__file__).parent.parent.parent / "drivers" / self.driver_name
 
     def is_driver_installed(self) -> bool:
-        """Check if virtual controller driver DLL exists.
+        """Check if virtual controller driver is installed in SteamVR.
 
         Returns:
-            bool: True if driver DLL is present
+            bool: True if driver is installed in SteamVR
         """
-        # Check if our custom driver DLL exists
-        driver_dll = self.bundled_driver_path / "bin" / "win64" / "driver_virtual_controller.dll"
+        # Check if driver is installed in SteamVR (not just bundled with app)
+        driver_dll = self.driver_install_path / "bin" / "win64" / "driver_virtual_controller.dll"
         return driver_dll.exists()
 
     def install_driver(self) -> Tuple[bool, str]:

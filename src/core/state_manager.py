@@ -120,17 +120,11 @@ class StateManager:
                 self._modify_null_driver(False)
                 return False, f"Failed to modify SteamVR config: {error}", ToggleState.ERROR
 
-            # Install and enable virtual controllers if configured
+            # Enable virtual controllers if configured (will auto-install driver if needed)
             if self.enable_controllers and self.controller_manager:
-                # Install driver to SteamVR
-                success, error = self.controller_manager.install_driver()
+                success, error = self.controller_manager.enable_controllers(self.controller_count)
                 if not success:
-                    print(f"Warning: Failed to install virtual controller driver: {error}")
-                else:
-                    # Configure controller count
-                    success, error = self.controller_manager.enable_controllers(self.controller_count)
-                    if not success:
-                        print(f"Warning: Failed to configure virtual controllers: {error}")
+                    print(f"Warning: Failed to enable virtual controllers: {error}")
 
             # Verify the changes
             new_state = self.get_current_state()
